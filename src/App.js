@@ -1,25 +1,48 @@
-import logo from './logo.svg';
-import './App.css';
+import "./App.css";
+import { useState } from "react";
+import AddTask from "./AddTask";
+import TaskItem from "./TaskItem";
 
 function App() {
+  const [tasks, setTasks] = useState([]);
+  const [taskName, setTaskName] = useState("");
+
+  function addTask() {
+    if (taskName.trim() === "") return;
+
+    setTasks([...tasks, taskName]);
+    setTaskName("");
+  }
+
+  function deleteTask(indexToDelete) {
+    setTasks(tasks.filter((task, index) => index !== indexToDelete));
+  }
+
+  function editTask(indexToEdit, newTask) {
+    setTasks(
+      tasks.map((task, index) => (index === indexToEdit ? newTask : task)),
+    );
+  }
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <h1>My To-Do List</h1>
+      <AddTask
+        onAddTask={addTask}
+        taskName={taskName}
+        setTaskName={setTaskName}
+      />
+      <ul>
+        {tasks.map((task, index) => (
+          <TaskItem
+            key={index}
+            task={task}
+            onDeleteTask={() => deleteTask(index)}
+            onEditTask={(newTask) => editTask(index, newTask)}
+          />
+        ))}
+      </ul>
     </div>
   );
 }
-
 export default App;
